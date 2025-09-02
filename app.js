@@ -847,6 +847,7 @@ async function exportToPDF() {
                                 height: height
                             });
                         }
+                    }
                 } catch (error) {
                     console.error(`Fehler beim Verarbeiten von ${file.name}:`, error);
                 }

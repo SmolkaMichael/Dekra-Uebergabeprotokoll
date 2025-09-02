@@ -50,6 +50,12 @@ function setupEventListeners() {
     const exportWordBtn = document.getElementById('exportWord');
     if (exportWordBtn) exportWordBtn.addEventListener('click', exportToWord);
     
+    // Word merge button listener
+    const mergeWordBtn = document.getElementById('mergeWord');
+    if (mergeWordBtn) mergeWordBtn.addEventListener('click', () => {
+        window.open('https://products.groupdocs.app/merger/word', '_blank');
+    });
+    
     // File upload listener
     const fileUpload = document.getElementById('fileUpload');
     if (fileUpload) fileUpload.addEventListener('change', handleFileUpload);
@@ -389,8 +395,8 @@ function updateLivePreview() {
                 attachmentPage.style.cssText = `
                     background: white;
                     width: 210mm;
-                    min-height: 297mm;
-                    padding: 25mm 20mm 25mm 25mm;
+                    min-height: 350mm;
+                    padding: 25mm 20mm 35mm 25mm;
                     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
                     transform-origin: top center;
                     font-family: Arial, sans-serif;
@@ -401,7 +407,7 @@ function updateLivePreview() {
                     display: flex;
                     flex-direction: column;
                     box-sizing: border-box;
-                    transform: scale(0.75);
+                    transform: scale(0.65);
                     margin-bottom: 40px;
                 `;
                 
@@ -1325,7 +1331,10 @@ async function exportToWord() {
                 ]
             });
             
-            // Process each attachment
+            // KEINE Anhänge im Word-Export - nur die ausgefüllte Vorlage!
+            // Anhänge werden NICHT in Word eingefügt
+            /*
+            // Process each attachment - DEAKTIVIERT
             for (const file of appState.attachedFiles) {
                 // For Word documents, try to read and append content
                 if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
@@ -1536,6 +1545,7 @@ async function exportToWord() {
                     });
                 }
             }
+            */
         }
         
         // Generate and download

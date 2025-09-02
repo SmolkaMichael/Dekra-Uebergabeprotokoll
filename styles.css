@@ -19,7 +19,7 @@ body {
     font-family: 'Calibri', 'Arial', sans-serif;
     background-color: #E0E0E0;
     color: var(--text-black);
-    font-size: 16pt;
+    font-size: 11pt;
 }
 
 /* App Container */
@@ -41,7 +41,7 @@ body {
 
 .form-panel h2 {
     color: var(--dekra-blue);
-    font-size: 32px;
+    font-size: 20px;
     margin-bottom: 20px;
     text-align: center;
     border-bottom: 2px solid var(--dekra-blue);
@@ -60,7 +60,7 @@ body {
 legend {
     color: var(--dekra-blue);
     font-weight: bold;
-    font-size: 20px;
+    font-size: 14px;
     padding: 0 10px;
     background: white;
 }
@@ -86,7 +86,7 @@ label {
     margin-bottom: 5px;
     color: var(--text-black);
     font-weight: 600;
-    font-size: 18px;
+    font-size: 12px;
 }
 
 input[type="text"],
@@ -95,10 +95,10 @@ input[type="file"],
 textarea,
 select {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     border: 1px solid var(--border-gray);
     border-radius: 3px;
-    font-size: 18px;
+    font-size: 12px;
     font-family: 'Calibri', 'Arial', sans-serif;
 }
 
@@ -116,10 +116,10 @@ textarea {
 
 /* Buttons */
 button {
-    padding: 12px 24px;
+    padding: 8px 16px;
     border: none;
     border-radius: 3px;
-    font-size: 20px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -215,7 +215,7 @@ button {
 
 .preview-header h2 {
     color: var(--dekra-blue);
-    font-size: 24px;
+    font-size: 16px;
 }
 
 .preview-controls {
@@ -265,8 +265,8 @@ button {
     transform-origin: top center;
     transition: transform 0.3s ease;
     font-family: Arial, sans-serif;
-    font-size: 14pt;
-    line-height: 1.4;
+    font-size: 16pt;
+    line-height: 1.6;
     color: black;
     position: relative;
     display: flex;

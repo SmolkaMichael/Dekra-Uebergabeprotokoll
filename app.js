@@ -89,8 +89,8 @@ function updateLivePreview() {
     // Apply the exact DEKRA template styles with proper padding
     previewContent.style.cssText = `
         font-family: Arial, sans-serif;
-        font-size: 11pt;
-        line-height: 1.4;
+        font-size: 16pt;
+        line-height: 1.6;
         background: white;
         position: relative;
         width: 100%;
@@ -112,8 +112,8 @@ function updateLivePreview() {
             
             .preview-page {
                 font-family: Arial, sans-serif;
-                font-size: 11pt;
-                line-height: 1.4;
+                font-size: 16pt;
+                line-height: 1.6;
             }
             
             /* KOPFZEILE */
@@ -127,17 +127,17 @@ function updateLivePreview() {
             
             .header .company-name {
                 font-weight: bold;
-                font-size: 14pt;
+                font-size: 22pt;
                 margin-bottom: 5px;
             }
             
             .header .department {
-                font-size: 11pt;
+                font-size: 18pt;
                 margin-bottom: 3px;
             }
             
             .header .contact {
-                font-size: 10pt;
+                font-size: 16pt;
                 color: #333;
             }
             
@@ -145,7 +145,7 @@ function updateLivePreview() {
                 position: absolute;
                 right: 0;
                 top: 0;
-                font-size: 10pt;
+                font-size: 16pt;
             }
             
             /* HAUPTINHALT */
@@ -161,18 +161,18 @@ function updateLivePreview() {
             }
             
             .recipient-address {
-                font-size: 10pt;
-                line-height: 1.3;
-                max-width: 200px;
+                font-size: 16pt;
+                line-height: 1.5;
+                max-width: 300px;
             }
             
             .document-info {
                 text-align: left;
-                font-size: 10pt;
-                line-height: 1.6;
+                font-size: 16pt;
+                line-height: 1.8;
                 display: grid;
                 grid-template-columns: auto auto;
-                gap: 10px;
+                gap: 15px;
                 margin-left: auto;
                 white-space: nowrap;
             }
@@ -195,11 +195,11 @@ function updateLivePreview() {
             
             .gutachten-title {
                 text-align: center;
-                font-size: 16pt;
+                font-size: 24pt;
                 font-weight: bold;
-                letter-spacing: 10px;
-                margin: 40px 0;
-                padding: 10px 0;
+                letter-spacing: 15px;
+                margin: 50px 0;
+                padding: 15px 0;
             }
             
             .gutachten-details {
@@ -235,8 +235,8 @@ function updateLivePreview() {
                 margin-top: auto;
                 border-top: 1px solid #666;
                 padding-top: 10px;
-                font-size: 8pt;
-                line-height: 1.3;
+                font-size: 12pt;
+                line-height: 1.5;
                 color: #444;
             }
             
@@ -247,13 +247,13 @@ function updateLivePreview() {
             }
             
             .footer-column h4 {
-                font-size: 8.5pt;
+                font-size: 13pt;
                 margin-bottom: 3px;
                 font-weight: bold;
             }
             
             .footer-column {
-                font-size: 7.5pt;
+                font-size: 11pt;
             }
             
             .footer-column p {

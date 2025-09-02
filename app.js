@@ -829,25 +829,72 @@ async function exportToPDF() {
                                file.type === 'application/msword' || 
                                file.name.endsWith('.docx') || 
                                file.name.endsWith('.doc')) {
-                        // Word files - add info page
+                        // Word files - add detailed info page
                         const infoPage = pdfDoc.addPage([595, 842]);
-                        infoPage.drawText(`Anhang: ${file.name}`, {
+                        const { height } = infoPage.getSize();
+                        
+                        // Title
+                        infoPage.drawText('WORD-DOKUMENT ANHANG', {
                             x: 50,
-                            y: 750,
-                            size: 16,
+                            y: height - 100,
+                            size: 20,
+                            font: helveticaBold,
+                            color: rgb(0, 0, 0)
+                        });
+                        
+                        // Draw separator line
+                        infoPage.drawLine({
+                            start: { x: 50, y: height - 120 },
+                            end: { x: 545, y: height - 120 },
+                            thickness: 2,
+                            color: rgb(0, 0, 0)
+                        });
+                        
+                        // File information
+                        infoPage.drawText(`Dateiname: ${file.name}`, {
+                            x: 50,
+                            y: height - 160,
+                            size: 14,
                             font: helveticaBold
                         });
-                        infoPage.drawText(`Größe: ${formatFileSize(file.size)}`, {
+                        
+                        infoPage.drawText(`Dateigröße: ${formatFileSize(file.size)}`, {
                             x: 50,
-                            y: 720,
+                            y: height - 190,
                             size: 12,
                             font: helvetica
                         });
-                        infoPage.drawText('Word-Dokument wurde angehängt.', {
+                        
+                        infoPage.drawText(`Hinzugefügt am: ${new Date().toLocaleDateString('de-DE')}`, {
                             x: 50,
-                            y: 690,
+                            y: height - 220,
                             size: 12,
                             font: helvetica
+                        });
+                        
+                        // Note
+                        infoPage.drawText('Hinweis:', {
+                            x: 50,
+                            y: height - 280,
+                            size: 12,
+                            font: helveticaBold
+                        });
+                        
+                        const noteText = [
+                            'Dieses Word-Dokument wurde als Anhang hinzugefügt.',
+                            'Für die vollständige Integration öffnen Sie bitte',
+                            'beide Dokumente in Microsoft Word und fügen Sie',
+                            'diese manuell zusammen.'
+                        ];
+                        
+                        noteText.forEach((line, index) => {
+                            infoPage.drawText(line, {
+                                x: 50,
+                                y: height - 310 - (index * 20),
+                                size: 11,
+                                font: helvetica,
+                                color: rgb(0.3, 0.3, 0.3)
+                            });
                         });
                     }
                 } catch (error) {
@@ -1227,8 +1274,9 @@ async function exportToWord() {
             }]
         });
         
-        // Add attachment info page if there are attachments
+        // Add attachment pages if there are attachments
         if (appState.attachedFiles.length > 0) {
+            // Add separator page
             doc.addSection({
                 children: [
                     new Paragraph({
@@ -1236,52 +1284,73 @@ async function exportToWord() {
                             new TextRun({
                                 text: "ANHÄNGE",
                                 bold: true,
-                                size: 32
+                                size: 48
                             })
                         ],
                         alignment: AlignmentType.CENTER,
-                        spacing: { before: 600, after: 600 }
+                        spacing: { before: 1200, after: 600 }
                     }),
                     new Paragraph({
                         children: [
                             new TextRun({
                                 text: "Folgende Dokumente sind diesem Gutachten beigefügt:",
-                                size: 24
+                                size: 28
                             })
                         ],
-                        spacing: { after: 400 }
-                    }),
-                    ...appState.attachedFiles.map((file, index) => 
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: `${index + 1}. ${file.name} (${formatFileSize(file.size)})`,
-                                    size: 22
-                                })
-                            ],
-                            spacing: { after: 200 },
-                            bullet: {
-                                level: 0
-                            }
-                        })
-                    ),
-                    new Paragraph({
-                        children: [
-                            new TextRun({
-                                text: "\n\nHinweis: Die angehängten Dateien wurden als separate Dokumente gespeichert. ",
-                                size: 20,
-                                italics: true
-                            }),
-                            new TextRun({
-                                text: "Bei PDF-Export werden diese automatisch zusammengeführt.",
-                                size: 20,
-                                italics: true
-                            })
-                        ],
-                        spacing: { before: 600 }
+                        spacing: { after: 600 }
                     })
                 ]
             });
+            
+            // Process each attachment
+            for (const file of appState.attachedFiles) {
+                // Add info page for each attachment
+                doc.addSection({
+                    children: [
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: `Anhang: ${file.name}`,
+                                    bold: true,
+                                    size: 32
+                                })
+                            ],
+                            spacing: { after: 400 }
+                        }),
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: `Dateigröße: ${formatFileSize(file.size)}`,
+                                    size: 24
+                                })
+                            ],
+                            spacing: { after: 200 }
+                        }),
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: `Dateityp: ${file.type || 'Unbekannt'}`,
+                                    size: 24
+                                })
+                            ],
+                            spacing: { after: 600 }
+                        }),
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: file.type === 'application/pdf' ? 
+                                          "PDF-Dokument - Wird beim PDF-Export automatisch angehängt." :
+                                          file.type.startsWith('image/') ?
+                                          "Bilddatei - Wird beim PDF-Export als neue Seite eingefügt." :
+                                          "Word-Dokument - Bitte separat öffnen und zusammenführen.",
+                                    size: 22,
+                                    italics: true
+                                })
+                            ]
+                        })
+                    ]
+                });
+            }
         }
         
         // Generate and download

@@ -50,6 +50,10 @@ function setupEventListeners() {
     const exportWordBtn = document.getElementById('exportWord');
     if (exportWordBtn) exportWordBtn.addEventListener('click', exportToWord);
     
+    // Template export button listener
+    const exportTemplateBtn = document.getElementById('exportTemplate');
+    if (exportTemplateBtn) exportTemplateBtn.addEventListener('click', exportFromTemplate);
+    
     // Word merge button listener
     const mergeWordBtn = document.getElementById('mergeWord');
     if (mergeWordBtn) mergeWordBtn.addEventListener('click', () => {
@@ -467,6 +471,78 @@ function updateLivePreview() {
     } catch (error) {
         console.error('Error updating preview:', error);
         previewContent.innerHTML = '<p style="color: red; padding: 20px;">Fehler beim Laden der Vorschau. Bitte Seite neu laden.</p>';
+    }
+}
+
+// Export using MatthiasVorlage.docx template
+async function exportFromTemplate() {
+    showProgress('Erstelle Word mit Matthias Vorlage...');
+    
+    try {
+        const formData = collectFormData();
+        
+        // Load the template file
+        const templateResponse = await fetch('./MatthiasVorlage.docx');
+        if (!templateResponse.ok) {
+            throw new Error('MatthiasVorlage.docx konnte nicht geladen werden');
+        }
+        
+        const templateArrayBuffer = await templateResponse.arrayBuffer();
+        const zip = new PizZip(templateArrayBuffer);
+        const doc = new window.docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        });
+        
+        // Prepare data for template (convert to template format)
+        const templateData = {
+            gutachtenNummer: formData.gutachtenNummer || '',
+            datum: formatDateLong(formData.datum),
+            auftraggeber: formData.auftraggeber || '',
+            kundenNummer: formData.kundenNummer || '',
+            empfaengerName: formData.empfaengerName || '',
+            empfaengerStrasse: formData.empfaengerStrasse || '',
+            empfaengerPLZ: formData.empfaengerPLZ || '',
+            empfaengerOrt: formData.empfaengerOrt || '',
+            aktenzeichen: formData.aktenzeichen || '',
+            beteiligte: formData.beteiligte || '',
+            auftragVom: formatDate(formData.auftragVom),
+            besichtigungsdatum: formatDate(formData.besichtigungsdatum),
+            besichtigungsort: formData.besichtigungsort || '',
+            sachverstaendiger: formData.sachverstaendiger || ''
+        };
+        
+        console.log('Template data:', templateData);
+        
+        // Fill template with data
+        doc.setData(templateData);
+        
+        try {
+            doc.render();
+        } catch (error) {
+            console.error('Template render error:', error);
+            // If template has no placeholders, continue anyway
+            alert('Hinweis: Template hat möglicherweise keine Platzhalter. Dokument wird trotzdem erstellt.');
+        }
+        
+        // Generate and download
+        const buf = doc.getZip().generate({
+            type: 'blob',
+            mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        });
+        
+        const url = URL.createObjectURL(buf);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Matthias_Gutachten_${formData.gutachtenNummer || 'draft'}.docx`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+    } catch (error) {
+        console.error('Fehler beim Template-Export:', error);
+        alert(`Fehler beim Erstellen mit Matthias Vorlage: ${error.message}`);
+    } finally {
+        hideProgress();
     }
 }
 

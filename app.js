@@ -97,12 +97,12 @@ function updateLivePreview() {
         previewContent.style.cssText = `
             font-family: Arial, sans-serif;
             font-size: 16pt;
-            line-height: 1.6;
+            line-height: 1.8;
             background: white;
             position: relative;
             width: 100%;
-            min-height: 297mm;
-            padding: 25mm 20mm 25mm 25mm;
+            min-height: 400mm;
+            padding: 30mm 25mm 40mm 30mm;
             display: flex;
             flex-direction: column;
             box-sizing: border-box;

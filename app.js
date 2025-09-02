@@ -86,8 +86,8 @@ function handleFormInput(event) {
     saveToLocalStorage();
 }
 
-// Update Live Preview with exact DEKRA professional layout
-function updateLivePreview() {
+// Update Live Preview with MATTHIAS TEMPLATE
+async function updateLivePreview() {
     const previewContent = document.getElementById('previewContent');
     if (!previewContent) {
         console.error('Preview content element not found');
@@ -97,6 +97,92 @@ function updateLivePreview() {
     try {
         const formData = collectFormData();
         
+        // Load and render the MatthiasVorlage.docx template
+        const templateResponse = await fetch('./MatthiasVorlage.docx');
+        if (!templateResponse.ok) {
+            console.warn('MatthiasVorlage.docx nicht gefunden, verwende HTML-Fallback');
+            updateHtmlPreview(formData);
+            return;
+        }
+        
+        const templateArrayBuffer = await templateResponse.arrayBuffer();
+        const zip = new PizZip(templateArrayBuffer);
+        const doc = new window.docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        });
+        
+        // Prepare data for template
+        const templateData = {
+            gutachtenNummer: formData.gutachtenNummer || '[Gutachten-Nr.]',
+            datum: formatDateLong(formData.datum) || '[Datum]',
+            auftraggeber: formData.auftraggeber || '[Auftraggeber]',
+            kundenNummer: formData.kundenNummer || '[Kunden-Nr.]',
+            empfaengerName: formData.empfaengerName || '[Empfänger Name]',
+            empfaengerStrasse: formData.empfaengerStrasse || '[Straße]',
+            empfaengerPLZ: formData.empfaengerPLZ || '[PLZ]',
+            empfaengerOrt: formData.empfaengerOrt || '[Ort]',
+            aktenzeichen: formData.aktenzeichen || '[Aktenzeichen]',
+            beteiligte: formData.beteiligte || '[Beteiligte]',
+            auftragVom: formatDate(formData.auftragVom) || '[Auftrag vom]',
+            besichtigungsdatum: formatDate(formData.besichtigungsdatum) || '[Besichtigungsdatum]',
+            besichtigungsort: formData.besichtigungsort || '[Besichtigungsort]',
+            sachverstaendiger: formData.sachverstaendiger || '[Sachverständiger]'
+        };
+        
+        // Fill template with data
+        doc.setData(templateData);
+        
+        try {
+            doc.render();
+        } catch (error) {
+            console.log('Template render info:', error);
+        }
+        
+        // Generate filled document
+        const buf = doc.getZip().generate({
+            type: 'arraybuffer'
+        });
+        
+        // Clear preview and render the Word document
+        previewContent.innerHTML = '';
+        previewContent.style.cssText = `
+            width: 100%;
+            height: 100%;
+            background: white;
+            overflow: auto;
+        `;
+        
+        // Use docx-preview to render the Word document
+        await docxPreview.renderAsync(buf, previewContent, null, {
+            className: 'docx-preview',
+            inWrapper: true,
+            ignoreWidth: false,
+            ignoreHeight: false,
+            ignoreFonts: false,
+            breakPages: true,
+            ignoreLastRenderedPageBreak: true,
+            experimental: true,
+            trimXmlDeclaration: true,
+            useBase64URL: true,
+            renderHeaders: true,
+            renderFooters: true,
+            renderFootnotes: true,
+            renderEndnotes: true
+        });
+        
+    } catch (error) {
+        console.error('Error updating preview with template:', error);
+        updateHtmlPreview(formData);
+    }
+}
+
+// Fallback HTML preview (old method)
+function updateHtmlPreview(formData) {
+    const previewContent = document.getElementById('previewContent');
+    if (!previewContent) return;
+    
+    try {
         // Apply the exact DEKRA template styles with proper padding
         previewContent.style.cssText = `
             font-family: Arial, sans-serif;
@@ -386,7 +472,6 @@ function updateLivePreview() {
         </footer>
     `;
         
-        // Remove old attachment pages
         const pdfPreview = document.getElementById('pdfPreview');
         const oldAttachments = pdfPreview.querySelectorAll('.attachment-page');
         oldAttachments.forEach(page => page.remove());
@@ -467,10 +552,6 @@ function updateLivePreview() {
                 pdfPreview.appendChild(attachmentPage);
             });
         }
-        
-    } catch (error) {
-        console.error('Error updating preview:', error);
-        previewContent.innerHTML = '<p style="color: red; padding: 20px;">Fehler beim Laden der Vorschau. Bitte Seite neu laden.</p>';
     }
 }
 

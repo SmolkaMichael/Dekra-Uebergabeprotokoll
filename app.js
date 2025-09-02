@@ -97,11 +97,14 @@ async function updateLivePreview() {
     try {
         const formData = collectFormData();
         
+        // Show loading message
+        previewContent.innerHTML = '<div style="padding: 50px; text-align: center;"><h3>Lade MatthiasVorlage.docx...</h3></div>';
+        
         // Load and render the MatthiasVorlage.docx template
         const templateResponse = await fetch('./MatthiasVorlage.docx');
         if (!templateResponse.ok) {
-            console.warn('MatthiasVorlage.docx nicht gefunden, verwende HTML-Fallback');
-            updateHtmlPreview(formData);
+            console.error('MatthiasVorlage.docx konnte nicht geladen werden');
+            previewContent.innerHTML = '<div style="padding: 50px; text-align: center; color: red;"><h3>MatthiasVorlage.docx nicht gefunden!</h3><p>Bitte stelle sicher, dass die Datei vorhanden ist.</p></div>';
             return;
         }
         
@@ -552,6 +555,8 @@ function updateHtmlPreview(formData) {
                 pdfPreview.appendChild(attachmentPage);
             });
         }
+    } catch (error) {
+        console.error('Error in updateHtmlPreview:', error);
     }
 }
 

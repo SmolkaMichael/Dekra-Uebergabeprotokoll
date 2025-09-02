@@ -455,6 +455,19 @@ button {
     }
 }
 
+/* Docx Preview Styles */
+.docx-preview {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: auto !important;
+}
+
+.docx-preview .docx {
+    background: white !important;
+    padding: 20px !important;
+    max-width: 100% !important;
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
     width: 10px;

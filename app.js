@@ -374,18 +374,90 @@ function updateLivePreview() {
                 </div>
             </div>
         </footer>
-        
-        ${appState.attachedFiles.length > 0 ? `
-        <div style="margin-top: 30px; padding: 20px; border: 1px solid #ccc; background: #f9f9f9;">
-            <h3 style="font-size: 12pt; margin-bottom: 10px;">Anhänge werden hinzugefügt:</h3>
-            <ul style="list-style-type: disc; margin-left: 20px;">
-                ${appState.attachedFiles.map(file => `
-                    <li style="margin-bottom: 5px;">${file.name} (${formatFileSize(file.size)})</li>
-                `).join('')}
-            </ul>
-        </div>
-        ` : ''}
     `;
+        
+        // Remove old attachment pages
+        const pdfPreview = document.getElementById('pdfPreview');
+        const oldAttachments = pdfPreview.querySelectorAll('.attachment-page');
+        oldAttachments.forEach(page => page.remove());
+        
+        // Add attachment pages to preview
+        if (appState.attachedFiles.length > 0) {
+            appState.attachedFiles.forEach((file, index) => {
+                const attachmentPage = document.createElement('div');
+                attachmentPage.className = 'preview-page attachment-page';
+                attachmentPage.style.cssText = `
+                    background: white;
+                    width: 210mm;
+                    height: 297mm;
+                    padding: 25mm 20mm 25mm 25mm;
+                    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+                    transform-origin: top center;
+                    font-family: Arial, sans-serif;
+                    font-size: 16pt;
+                    line-height: 1.6;
+                    color: black;
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    box-sizing: border-box;
+                    transform: scale(0.65);
+                    margin-top: 30px;
+                `;
+                
+                if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                    attachmentPage.innerHTML = `
+                        <h2 style="text-align: center; font-size: 24pt; margin-bottom: 30px;">Anhang ${index + 1}</h2>
+                        <div style="text-align: center; padding: 50px; background: #f0f0f0; border: 2px dashed #999;">
+                            <p style="font-size: 18pt; font-weight: bold; margin-bottom: 20px;">📄 PDF-Dokument</p>
+                            <p style="font-size: 16pt;">${file.name}</p>
+                            <p style="font-size: 14pt; color: #666; margin-top: 10px;">Größe: ${formatFileSize(file.size)}</p>
+                            <p style="font-size: 12pt; color: #999; margin-top: 20px;">Wird beim Export automatisch eingefügt</p>
+                        </div>
+                    `;
+                } else if (file.type.startsWith('image/')) {
+                    // For images, create a preview
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        attachmentPage.innerHTML = `
+                            <h2 style="text-align: center; font-size: 24pt; margin-bottom: 30px;">Anhang ${index + 1}</h2>
+                            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                                <img src="${e.target.result}" style="max-width: 100%; max-height: 600px; object-fit: contain; margin: 0 auto;">
+                                <p style="font-size: 14pt; margin-top: 20px;">${file.name}</p>
+                                <p style="font-size: 12pt; color: #666;">Größe: ${formatFileSize(file.size)}</p>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                           file.type === 'application/msword' || 
+                           file.name.endsWith('.docx') || 
+                           file.name.endsWith('.doc')) {
+                    attachmentPage.innerHTML = `
+                        <h2 style="text-align: center; font-size: 24pt; margin-bottom: 30px;">Anhang ${index + 1}</h2>
+                        <div style="text-align: center; padding: 50px; background: #e3f2fd; border: 2px dashed #2196F3;">
+                            <p style="font-size: 18pt; font-weight: bold; margin-bottom: 20px;">📝 Word-Dokument</p>
+                            <p style="font-size: 16pt;">${file.name}</p>
+                            <p style="font-size: 14pt; color: #666; margin-top: 10px;">Größe: ${formatFileSize(file.size)}</p>
+                            <p style="font-size: 12pt; color: #1976D2; margin-top: 20px;">Wird beim Word-Export angehängt</p>
+                        </div>
+                    `;
+                } else {
+                    attachmentPage.innerHTML = `
+                        <h2 style="text-align: center; font-size: 24pt; margin-bottom: 30px;">Anhang ${index + 1}</h2>
+                        <div style="text-align: center; padding: 50px; background: #f5f5f5; border: 2px dashed #999;">
+                            <p style="font-size: 18pt; font-weight: bold; margin-bottom: 20px;">📎 Dokument</p>
+                            <p style="font-size: 16pt;">${file.name}</p>
+                            <p style="font-size: 14pt; color: #666; margin-top: 10px;">Typ: ${file.type || 'Unbekannt'}</p>
+                            <p style="font-size: 14pt; color: #666;">Größe: ${formatFileSize(file.size)}</p>
+                        </div>
+                    `;
+                }
+                
+                pdfPreview.appendChild(attachmentPage);
+            });
+        }
+        
     } catch (error) {
         console.error('Error updating preview:', error);
         previewContent.innerHTML = '<p style="color: red; padding: 20px;">Fehler beim Laden der Vorschau. Bitte Seite neu laden.</p>';
@@ -530,25 +602,25 @@ async function exportToPDF() {
         page.drawText('DEKRA Automobil GmbH', {
             x: 50,
             y: yPos,
-            size: 22,
+            size: 14,
             font: helveticaBold
         });
-        yPos -= 25;
+        yPos -= 20;
         
         // Department
         page.drawText('Niederlassung Düsseldorf Fachbereich Polizei- und Gerichtsgutachten', {
             x: 50,
             y: yPos,
-            size: 18,
+            size: 11,
             font: helvetica
         });
-        yPos -= 20;
+        yPos -= 15;
         
         // Contact with Blatt 1
         page.drawText('Höherweg 111, 40233 Düsseldorf, Telefon 0211/2300-0, Fax 0211/2300-222', {
             x: 50,
             y: yPos,
-            size: 16,
+            size: 10,
             font: helvetica,
             color: rgb(0.2, 0.2, 0.2)
         });
@@ -557,10 +629,10 @@ async function exportToPDF() {
         page.drawText('Blatt 1', {
             x: width - 100,
             y: yPos,
-            size: 16,
+            size: 10,
             font: helvetica
         });
-        yPos -= 15;
+        yPos -= 10;
         
         // Draw header line
         page.drawLine({
@@ -586,44 +658,44 @@ async function exportToPDF() {
             page.drawText(line, {
                 x: 50,
                 y: addressY,
-                size: 16,
+                size: 10,
                 font: helvetica
             });
-            addressY -= 20;
+            addressY -= 15;
         }
         
         // Document info (right side) - aligned with address
         let infoY = infoStartY;
-        page.drawText('Gutachten-Nummer', { x: 320, y: infoY, size: 16, font: helvetica });
+        page.drawText('Gutachten-Nummer', { x: 320, y: infoY, size: 10, font: helvetica });
         page.drawText(formData.gutachtenNummer || '302/53884 25-4322909943', { 
-            x: 450, y: infoY, size: 16, font: helveticaBold 
+            x: 450, y: infoY, size: 10, font: helveticaBold 
         });
-        infoY -= 20;
+        infoY -= 15;
         
-        page.drawText('vom', { x: 320, y: infoY, size: 16, font: helvetica });
+        page.drawText('vom', { x: 320, y: infoY, size: 10, font: helvetica });
         page.drawText(formatDate(formData.datum) || '02.09.2025', { 
-            x: 450, y: infoY, size: 16, font: helvetica 
+            x: 450, y: infoY, size: 10, font: helvetica 
         });
-        infoY -= 20;
+        infoY -= 15;
         
-        page.drawText('Kunden-Nummer', { x: 320, y: infoY, size: 16, font: helvetica });
+        page.drawText('Kunden-Nummer', { x: 320, y: infoY, size: 10, font: helvetica });
         page.drawText(formData.kundenNummer || '212500140', { 
-            x: 450, y: infoY, size: 16, font: helvetica 
+            x: 450, y: infoY, size: 10, font: helvetica 
         });
         
         yPos = addressY - 20;
         
         // Title
-        yPos = height - 350;
+        yPos = height - 300;
         const titleText = 'GUTACHTEN';
-        const titleWidth = helveticaBold.widthOfTextAtSize(titleText, 24);
+        const titleWidth = helveticaBold.widthOfTextAtSize(titleText, 16);
         page.drawText(titleText, {
             x: (width - titleWidth) / 2,
             y: yPos,
-            size: 24,
+            size: 16,
             font: helveticaBold
         });
-        yPos -= 80;
+        yPos -= 60;
         
         // Details
         const details = [
@@ -640,14 +712,14 @@ async function exportToPDF() {
             page.drawText(detail.label, {
                 x: 50,
                 y: yPos,
-                size: 16,
+                size: 11,
                 font: helvetica
             });
             
             page.drawText(':', {
                 x: 200,
                 y: yPos,
-                size: 16,
+                size: 11,
                 font: helvetica
             });
             
@@ -655,12 +727,12 @@ async function exportToPDF() {
                 page.drawText(detail.value, {
                     x: 220,
                     y: yPos,
-                    size: 16,
+                    size: 11,
                     font: helvetica
                 });
             }
             
-            yPos -= 30;
+            yPos -= 25;
         }
         
         // Footer - Complete footer with all information

@@ -257,7 +257,7 @@ button {
 .preview-page {
     background: white;
     width: 210mm;
-    min-height: 297mm;
+    height: 297mm;
     padding: 25mm 20mm 25mm 25mm; /* Mehr Rand: oben, rechts, unten, links */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transform-origin: top center;
@@ -269,8 +269,10 @@ button {
     position: relative;
     display: flex;
     flex-direction: column;
-    /* Scale for better fit */
-    transform: scale(0.8);
+    box-sizing: border-box;
+    /* Scale for better fit in viewport */
+    transform: scale(0.65);
+    overflow: hidden;
 }
 
 /* Word Document Table Style */

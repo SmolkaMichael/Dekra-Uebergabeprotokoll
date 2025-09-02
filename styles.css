@@ -256,9 +256,7 @@ button {
 
 .preview-page {
     background: white;
-    width: 210mm !important;
-    max-width: 210mm !important;
-    min-width: 210mm !important;
+    width: 210mm;
     min-height: 297mm;
     padding: 25mm 20mm 25mm 25mm; /* Mehr Rand: oben, rechts, unten, links */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -271,9 +269,8 @@ button {
     position: relative;
     display: flex;
     flex-direction: column;
-    /* Fix browser zoom - A4 stays constant */
+    /* Scale for better fit */
     transform: scale(0.8);
-    zoom: reset !important;
 }
 
 /* Word Document Table Style */

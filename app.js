@@ -84,22 +84,23 @@ function updateLivePreview() {
         return;
     }
     
-    const formData = collectFormData();
-    
-    // Apply the exact DEKRA template styles with proper padding
-    previewContent.style.cssText = `
-        font-family: Arial, sans-serif;
-        font-size: 16pt;
-        line-height: 1.6;
-        background: white;
-        position: relative;
-        width: 100%;
-        min-height: 297mm;
-        padding: 25mm 20mm 25mm 25mm;
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-    `;
+    try {
+        const formData = collectFormData();
+        
+        // Apply the exact DEKRA template styles with proper padding
+        previewContent.style.cssText = `
+            font-family: Arial, sans-serif;
+            font-size: 16pt;
+            line-height: 1.6;
+            background: white;
+            position: relative;
+            width: 100%;
+            min-height: 297mm;
+            padding: 25mm 20mm 25mm 25mm;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        `;
     
     // Create the exact professional layout
     previewContent.innerHTML = `
@@ -385,6 +386,10 @@ function updateLivePreview() {
         </div>
         ` : ''}
     `;
+    } catch (error) {
+        console.error('Error updating preview:', error);
+        previewContent.innerHTML = '<p style="color: red; padding: 20px;">Fehler beim Laden der Vorschau. Bitte Seite neu laden.</p>';
+    }
 }
 
 // Collect form data

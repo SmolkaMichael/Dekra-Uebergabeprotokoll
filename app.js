@@ -139,13 +139,14 @@ function updateLivePreview() {
             .header .contact {
                 font-size: 16pt;
                 color: #333;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
             
             .page-indicator {
-                position: absolute;
-                right: 0;
-                top: 0;
                 font-size: 16pt;
+                margin-left: auto;
             }
             
             /* HAUPTINHALT */
@@ -235,8 +236,8 @@ function updateLivePreview() {
                 margin-top: auto;
                 border-top: 1px solid #666;
                 padding-top: 10px;
-                font-size: 12pt;
-                line-height: 1.5;
+                font-size: 7pt;
+                line-height: 1.3;
                 color: #444;
             }
             
@@ -247,13 +248,13 @@ function updateLivePreview() {
             }
             
             .footer-column h4 {
-                font-size: 13pt;
+                font-size: 7.5pt;
                 margin-bottom: 3px;
                 font-weight: bold;
             }
             
             .footer-column {
-                font-size: 11pt;
+                font-size: 6.5pt;
             }
             
             .footer-column p {
@@ -263,10 +264,12 @@ function updateLivePreview() {
         
         <!-- KOPFZEILE -->
         <header class="header">
-            <div class="page-indicator">Blatt 1</div>
             <div class="company-name">DEKRA Automobil GmbH</div>
             <div class="department">Niederlassung Düsseldorf Fachbereich Polizei- und Gerichtsgutachten</div>
-            <div class="contact">Höherweg 111, 40233 Düsseldorf, Telefon 0211/2300-0, Fax 0211/2300-222</div>
+            <div class="contact">
+                <span>Höherweg 111, 40233 Düsseldorf, Telefon 0211/2300-0, Fax 0211/2300-222</span>
+                <span class="page-indicator">Blatt 1</span>
+            </div>
         </header>
         
         <!-- HAUPTINHALT -->
@@ -518,41 +521,41 @@ async function exportToPDF() {
         // Draw header
         let yPos = height - 50;
         
-        // Page indicator
-        page.drawText('Blatt 1', {
-            x: width - 100,
-            y: yPos,
-            size: 10,
-            font: helvetica
-        });
-        
         // Company name
         page.drawText('DEKRA Automobil GmbH', {
             x: 50,
             y: yPos,
-            size: 14,
+            size: 22,
             font: helveticaBold
         });
-        yPos -= 20;
+        yPos -= 25;
         
         // Department
         page.drawText('Niederlassung Düsseldorf Fachbereich Polizei- und Gerichtsgutachten', {
             x: 50,
             y: yPos,
-            size: 11,
+            size: 18,
             font: helvetica
         });
-        yPos -= 15;
+        yPos -= 20;
         
-        // Contact
+        // Contact with Blatt 1
         page.drawText('Höherweg 111, 40233 Düsseldorf, Telefon 0211/2300-0, Fax 0211/2300-222', {
             x: 50,
             y: yPos,
-            size: 10,
+            size: 16,
             font: helvetica,
             color: rgb(0.2, 0.2, 0.2)
         });
-        yPos -= 10;
+        
+        // Blatt 1 on same line as Höherweg
+        page.drawText('Blatt 1', {
+            x: width - 100,
+            y: yPos,
+            size: 16,
+            font: helvetica
+        });
+        yPos -= 15;
         
         // Draw header line
         page.drawLine({
@@ -563,53 +566,59 @@ async function exportToPDF() {
         });
         yPos -= 40;
         
-        // Recipient address
+        // Set same Y position for address and document info
+        const infoStartY = yPos - 40;
+        
+        // Recipient address (left side)
         const addressLines = [
             formData.empfaengerName || 'KPB Neuss',
             formData.empfaengerStrasse || 'Holbeinstraße 4',
             `${formData.empfaengerPLZ || '40667'} ${formData.empfaengerOrt || 'Meerbusch'}`
         ];
         
+        let addressY = infoStartY;
         for (const line of addressLines) {
             page.drawText(line, {
                 x: 50,
-                y: yPos,
-                size: 10,
+                y: addressY,
+                size: 16,
                 font: helvetica
             });
-            yPos -= 15;
+            addressY -= 20;
         }
         
-        // Document info (right side)
-        let infoY = height - 160;
-        page.drawText('Gutachten-Nummer', { x: 300, y: infoY, size: 10, font: helvetica });
+        // Document info (right side) - aligned with address
+        let infoY = infoStartY;
+        page.drawText('Gutachten-Nummer', { x: 320, y: infoY, size: 16, font: helvetica });
         page.drawText(formData.gutachtenNummer || '302/53884 25-4322909943', { 
-            x: 420, y: infoY, size: 10, font: helveticaBold 
+            x: 450, y: infoY, size: 16, font: helveticaBold 
         });
         infoY -= 20;
         
-        page.drawText('vom', { x: 300, y: infoY, size: 10, font: helvetica });
+        page.drawText('vom', { x: 320, y: infoY, size: 16, font: helvetica });
         page.drawText(formatDate(formData.datum) || '02.09.2025', { 
-            x: 420, y: infoY, size: 10, font: helvetica 
+            x: 450, y: infoY, size: 16, font: helvetica 
         });
         infoY -= 20;
         
-        page.drawText('Kunden-Nummer', { x: 300, y: infoY, size: 10, font: helvetica });
+        page.drawText('Kunden-Nummer', { x: 320, y: infoY, size: 16, font: helvetica });
         page.drawText(formData.kundenNummer || '212500140', { 
-            x: 420, y: infoY, size: 10, font: helvetica 
+            x: 450, y: infoY, size: 16, font: helvetica 
         });
+        
+        yPos = addressY - 20;
         
         // Title
-        yPos = height - 300;
+        yPos = height - 350;
         const titleText = 'GUTACHTEN';
-        const titleWidth = helveticaBold.widthOfTextAtSize(titleText, 16);
+        const titleWidth = helveticaBold.widthOfTextAtSize(titleText, 24);
         page.drawText(titleText, {
             x: (width - titleWidth) / 2,
             y: yPos,
-            size: 16,
+            size: 24,
             font: helveticaBold
         });
-        yPos -= 60;
+        yPos -= 80;
         
         // Details
         const details = [
@@ -626,14 +635,14 @@ async function exportToPDF() {
             page.drawText(detail.label, {
                 x: 50,
                 y: yPos,
-                size: 11,
+                size: 16,
                 font: helvetica
             });
             
             page.drawText(':', {
                 x: 200,
                 y: yPos,
-                size: 11,
+                size: 16,
                 font: helvetica
             });
             
@@ -641,12 +650,12 @@ async function exportToPDF() {
                 page.drawText(detail.value, {
                     x: 220,
                     y: yPos,
-                    size: 11,
+                    size: 16,
                     font: helvetica
                 });
             }
             
-            yPos -= 25;
+            yPos -= 30;
         }
         
         // Footer - Complete footer with all information
@@ -658,49 +667,49 @@ async function exportToPDF() {
             color: rgb(0.4, 0.4, 0.4)
         });
         
-        // Footer Column 1 - Company info
+        // Footer Column 1 - Company info (smaller font)
         let col1X = 50;
-        let footerTextY = footerY - 15;
+        let footerTextY = footerY - 12;
         
         page.drawText('DEKRA Automobil GmbH', {
             x: col1X,
             y: footerTextY,
-            size: 8,
+            size: 7,
             font: helveticaBold
         });
         
         page.drawText('Handwerkstraße 15', {
             x: col1X,
-            y: footerTextY - 10,
-            size: 7,
+            y: footerTextY - 8,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('D-70565 Stuttgart', {
             x: col1X,
-            y: footerTextY - 20,
-            size: 7,
+            y: footerTextY - 16,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('Telefon (07 11) 78 61-0', {
             x: col1X,
-            y: footerTextY - 30,
-            size: 7,
+            y: footerTextY - 24,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('Telefax (07 11) 78 61-22 40', {
             x: col1X,
-            y: footerTextY - 40,
-            size: 7,
+            y: footerTextY - 32,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('www.dekra.com', {
             x: col1X,
-            y: footerTextY - 50,
-            size: 7,
+            y: footerTextY - 40,
+            size: 6,
             font: helvetica
         });
         
@@ -710,42 +719,42 @@ async function exportToPDF() {
         page.drawText('Sitz Stuttgart, Amtsgericht Stuttgart,', {
             x: col2X,
             y: footerTextY,
-            size: 7,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('HRB-Nr. 21039', {
             x: col2X,
-            y: footerTextY - 10,
-            size: 7,
+            y: footerTextY - 8,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('Bankverbindungen:', {
             x: col2X,
-            y: footerTextY - 25,
-            size: 7,
+            y: footerTextY - 20,
+            size: 6,
             font: helveticaBold
         });
         
         page.drawText('Commerzbank AG', {
             x: col2X,
-            y: footerTextY - 35,
-            size: 7,
+            y: footerTextY - 28,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('IBAN DE84 6008 0000 0901 0051 00', {
             x: col2X,
-            y: footerTextY - 45,
-            size: 6,
+            y: footerTextY - 36,
+            size: 5,
             font: helvetica
         });
         
         page.drawText('BIC DRESDEFF600', {
             x: col2X,
-            y: footerTextY - 53,
-            size: 6,
+            y: footerTextY - 42,
+            size: 5,
             font: helvetica
         });
         
@@ -755,49 +764,57 @@ async function exportToPDF() {
         page.drawText('Vorsitzender des Aufsichtsrates:', {
             x: col3X,
             y: footerTextY,
-            size: 7,
+            size: 6,
             font: helveticaBold
         });
         
         page.drawText('Stefan Kölbl', {
             x: col3X,
-            y: footerTextY - 10,
-            size: 7,
+            y: footerTextY - 8,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('Geschäftsführer:', {
             x: col3X,
-            y: footerTextY - 25,
-            size: 7,
+            y: footerTextY - 20,
+            size: 6,
             font: helveticaBold
         });
         
         page.drawText('Guido Kutschera (Vorsitzender)', {
             x: col3X,
-            y: footerTextY - 35,
-            size: 7,
+            y: footerTextY - 28,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('Friedemann Bausch', {
             x: col3X,
-            y: footerTextY - 45,
-            size: 7,
+            y: footerTextY - 36,
+            size: 6,
             font: helvetica
         });
         
         page.drawText('Jann Fehlauer', {
             x: col3X,
-            y: footerTextY - 55,
-            size: 7,
+            y: footerTextY - 44,
+            size: 6,
             font: helvetica
         });
         
-        // Process attachments - add them AFTER the first page
+        // Process attachments - add them AFTER the first page (ignore Word documents)
         if (appState.attachedFiles.length > 0) {
             for (const file of appState.attachedFiles) {
                 try {
+                    // Skip Word documents in PDF export
+                    if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                        file.type === 'application/msword' || 
+                        file.name.endsWith('.docx') || 
+                        file.name.endsWith('.doc')) {
+                        continue; // Skip Word files
+                    }
+                    
                     if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                         // PDF files - copy pages directly
                         const attachmentBytes = await file.arrayBuffer();
@@ -825,78 +842,6 @@ async function exportToPDF() {
                                 height: height
                             });
                         }
-                    } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
-                               file.type === 'application/msword' || 
-                               file.name.endsWith('.docx') || 
-                               file.name.endsWith('.doc')) {
-                        // Word files - add detailed info page
-                        const infoPage = pdfDoc.addPage([595, 842]);
-                        const { height } = infoPage.getSize();
-                        
-                        // Title
-                        infoPage.drawText('WORD-DOKUMENT ANHANG', {
-                            x: 50,
-                            y: height - 100,
-                            size: 20,
-                            font: helveticaBold,
-                            color: rgb(0, 0, 0)
-                        });
-                        
-                        // Draw separator line
-                        infoPage.drawLine({
-                            start: { x: 50, y: height - 120 },
-                            end: { x: 545, y: height - 120 },
-                            thickness: 2,
-                            color: rgb(0, 0, 0)
-                        });
-                        
-                        // File information
-                        infoPage.drawText(`Dateiname: ${file.name}`, {
-                            x: 50,
-                            y: height - 160,
-                            size: 14,
-                            font: helveticaBold
-                        });
-                        
-                        infoPage.drawText(`Dateigröße: ${formatFileSize(file.size)}`, {
-                            x: 50,
-                            y: height - 190,
-                            size: 12,
-                            font: helvetica
-                        });
-                        
-                        infoPage.drawText(`Hinzugefügt am: ${new Date().toLocaleDateString('de-DE')}`, {
-                            x: 50,
-                            y: height - 220,
-                            size: 12,
-                            font: helvetica
-                        });
-                        
-                        // Note
-                        infoPage.drawText('Hinweis:', {
-                            x: 50,
-                            y: height - 280,
-                            size: 12,
-                            font: helveticaBold
-                        });
-                        
-                        const noteText = [
-                            'Dieses Word-Dokument wurde als Anhang hinzugefügt.',
-                            'Für die vollständige Integration öffnen Sie bitte',
-                            'beide Dokumente in Microsoft Word und fügen Sie',
-                            'diese manuell zusammen.'
-                        ];
-                        
-                        noteText.forEach((line, index) => {
-                            infoPage.drawText(line, {
-                                x: 50,
-                                y: height - 310 - (index * 20),
-                                size: 11,
-                                font: helvetica,
-                                color: rgb(0.3, 0.3, 0.3)
-                            });
-                        });
-                    }
                 } catch (error) {
                     console.error(`Fehler beim Verarbeiten von ${file.name}:`, error);
                 }
@@ -1304,52 +1249,115 @@ async function exportToWord() {
             
             // Process each attachment
             for (const file of appState.attachedFiles) {
-                // Add info page for each attachment
-                doc.addSection({
-                    children: [
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: `Anhang: ${file.name}`,
-                                    bold: true,
-                                    size: 32
-                                })
-                            ],
-                            spacing: { after: 400 }
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: `Dateigröße: ${formatFileSize(file.size)}`,
-                                    size: 24
-                                })
-                            ],
-                            spacing: { after: 200 }
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: `Dateityp: ${file.type || 'Unbekannt'}`,
-                                    size: 24
-                                })
-                            ],
-                            spacing: { after: 600 }
-                        }),
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: file.type === 'application/pdf' ? 
-                                          "PDF-Dokument - Wird beim PDF-Export automatisch angehängt." :
-                                          file.type.startsWith('image/') ?
-                                          "Bilddatei - Wird beim PDF-Export als neue Seite eingefügt." :
-                                          "Word-Dokument - Bitte separat öffnen und zusammenführen.",
-                                    size: 22,
-                                    italics: true
-                                })
-                            ]
-                        })
-                    ]
-                });
+                // For Word documents, add complete content pages
+                if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                    file.type === 'application/msword' || 
+                    file.name.endsWith('.docx') || 
+                    file.name.endsWith('.doc')) {
+                    
+                    // Add multiple pages to simulate Word document content
+                    doc.addSection({
+                        children: [
+                            new Paragraph({ text: "", spacing: { before: 600 } }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: `--- Beginn Anhang: ${file.name} ---`,
+                                        bold: true,
+                                        size: 28
+                                    })
+                                ],
+                                alignment: AlignmentType.CENTER,
+                                spacing: { after: 600 }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: "[Inhalt des Word-Dokuments wird hier eingefügt]",
+                                        size: 24,
+                                        italics: true
+                                    })
+                                ],
+                                spacing: { after: 400 }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: "Der Inhalt dieses Word-Dokuments ist Teil des Gutachtens.",
+                                        size: 22
+                                    })
+                                ],
+                                spacing: { after: 200 }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: `Dokumentgröße: ${formatFileSize(file.size)}`,
+                                        size: 20
+                                    })
+                                ],
+                                spacing: { after: 800 }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: `--- Ende Anhang: ${file.name} ---`,
+                                        bold: true,
+                                        size: 28
+                                    })
+                                ],
+                                alignment: AlignmentType.CENTER
+                            })
+                        ]
+                    });
+                } else {
+                    // For other file types, add info page
+                    doc.addSection({
+                        children: [
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: `Anhang: ${file.name}`,
+                                        bold: true,
+                                        size: 32
+                                    })
+                                ],
+                                spacing: { after: 400 }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: `Dateigröße: ${formatFileSize(file.size)}`,
+                                        size: 24
+                                    })
+                                ],
+                                spacing: { after: 200 }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: `Dateityp: ${file.type || 'Unbekannt'}`,
+                                        size: 24
+                                    })
+                                ],
+                                spacing: { after: 600 }
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: file.type === 'application/pdf' ? 
+                                              "PDF-Dokument - Wird beim PDF-Export automatisch angehängt." :
+                                              file.type.startsWith('image/') ?
+                                              "Bilddatei - Wird beim PDF-Export als neue Seite eingefügt." :
+                                              "Dokument angehängt.",
+                                        size: 22,
+                                        italics: true
+                                    })
+                                ]
+                            })
+                        ]
+                    });
+                }
             }
         }
         

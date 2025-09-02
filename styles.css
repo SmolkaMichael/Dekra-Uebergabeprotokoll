@@ -252,13 +252,13 @@ button {
     justify-content: center;
     align-items: flex-start;
     background: #525659;
-    /* Prevent browser zoom from affecting preview */
-    zoom: reset;
 }
 
 .preview-page {
     background: white;
-    width: 210mm;
+    width: 210mm !important;
+    max-width: 210mm !important;
+    min-width: 210mm !important;
     min-height: 297mm;
     padding: 25mm 20mm 25mm 25mm; /* Mehr Rand: oben, rechts, unten, links */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
@@ -271,10 +271,9 @@ button {
     position: relative;
     display: flex;
     flex-direction: column;
-    /* Fix scaling - keep A4 size constant */
-    zoom: 1 !important;
-    -moz-transform: scale(1);
-    -moz-transform-origin: top center;
+    /* Fix browser zoom - A4 stays constant */
+    transform: scale(0.8);
+    zoom: reset !important;
 }
 
 /* Word Document Table Style */

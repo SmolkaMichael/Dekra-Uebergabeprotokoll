@@ -86,7 +86,7 @@ function handleFormInput(event) {
     saveToLocalStorage();
 }
 
-// Update Live Preview with MATTHIAS TEMPLATE using Microsoft Office Online
+// Update Live Preview with MATTHIAS TEMPLATE
 async function updateLivePreview() {
     const previewContent = document.getElementById('previewContent');
     if (!previewContent) {
@@ -97,22 +97,101 @@ async function updateLivePreview() {
     try {
         const formData = collectFormData();
         
-        // Use Microsoft Office Online Viewer for EXACT Word display
-        // This shows the document EXACTLY like in Microsoft Word!
-        const templateUrl = 'https://raw.githubusercontent.com/SmolkaMichael/Dekra-Uebergabeprotokoll/main/MatthiasVorlage.docx';
-        const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(templateUrl)}`;
+        // First, check if we have actual data to show
+        const hasData = Object.values(formData).some(value => value && value.trim() !== '');
         
-        previewContent.innerHTML = `
-            <iframe 
-                src="${viewerUrl}"
-                width="100%" 
-                height="100%" 
-                frameborder="0"
-                style="min-height: 800px; border: none;">
-                Dies ist eine Office Online-Vorschau.
-            </iframe>
-        `;
-        
+        if (!hasData) {
+            // Show the empty template using Office Viewer
+            const templateUrl = 'https://raw.githubusercontent.com/SmolkaMichael/Dekra-Uebergabeprotokoll/main/MatthiasVorlage.docx';
+            const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(templateUrl)}`;
+            
+            previewContent.innerHTML = `
+                <div style="height: 100%; display: flex; flex-direction: column;">
+                    <div style="background: #f0f0f0; padding: 10px; text-align: center; border-bottom: 1px solid #ccc;">
+                        <strong>MatthiasVorlage.docx</strong> - Fülle das Formular links aus, um die Daten zu sehen
+                    </div>
+                    <iframe 
+                        src="${viewerUrl}"
+                        width="100%" 
+                        height="100%" 
+                        frameborder="0"
+                        style="flex: 1; border: none;">
+                        Dies ist eine Office Online-Vorschau.
+                    </iframe>
+                </div>
+            `;
+        } else {
+            // Create a filled document and show it
+            previewContent.innerHTML = '<div style="padding: 50px; text-align: center;"><h3>Erstelle Vorschau mit deinen Daten...</h3></div>';
+            
+            // Load the template
+            const templateResponse = await fetch('./MatthiasVorlage.docx');
+            if (!templateResponse.ok) {
+                throw new Error('Template konnte nicht geladen werden');
+            }
+            
+            const templateArrayBuffer = await templateResponse.arrayBuffer();
+            const zip = new PizZip(templateArrayBuffer);
+            const doc = new window.docxtemplater(zip, {
+                paragraphLoop: true,
+                linebreaks: true,
+            });
+            
+            // Prepare template data with placeholders
+            const templateData = {
+                gutachtenNummer: formData.gutachtenNummer || '{{gutachtenNummer}}',
+                datum: formatDateLong(formData.datum) || '{{datum}}',
+                auftraggeber: formData.auftraggeber || '{{auftraggeber}}',
+                kundenNummer: formData.kundenNummer || '{{kundenNummer}}',
+                empfaengerName: formData.empfaengerName || '{{empfaengerName}}',
+                empfaengerStrasse: formData.empfaengerStrasse || '{{empfaengerStrasse}}',
+                empfaengerPLZ: formData.empfaengerPLZ || '{{empfaengerPLZ}}',
+                empfaengerOrt: formData.empfaengerOrt || '{{empfaengerOrt}}',
+                aktenzeichen: formData.aktenzeichen || '{{aktenzeichen}}',
+                beteiligte: formData.beteiligte || '{{beteiligte}}',
+                auftragVom: formatDate(formData.auftragVom) || '{{auftragVom}}',
+                besichtigungsdatum: formatDate(formData.besichtigungsdatum) || '{{besichtigungsdatum}}',
+                besichtigungsort: formData.besichtigungsort || '{{besichtigungsort}}',
+                sachverstaendiger: formData.sachverstaendiger || '{{sachverstaendiger}}'
+            };
+            
+            // Fill template
+            doc.setData(templateData);
+            
+            try {
+                doc.render();
+            } catch (error) {
+                console.log('Template render:', error);
+            }
+            
+            // Generate filled document
+            const buf = doc.getZip().generate({
+                type: 'arraybuffer'
+            });
+            
+            // Convert to HTML using mammoth for preview
+            const result = await mammoth.convertToHtml({arrayBuffer: buf});
+            
+            previewContent.innerHTML = `
+                <div style="height: 100%; display: flex; flex-direction: column;">
+                    <div style="background: #28a745; color: white; padding: 10px; text-align: center;">
+                        <strong>Live-Vorschau mit deinen Daten</strong>
+                    </div>
+                    <div style="
+                        flex: 1;
+                        background: white;
+                        padding: 40px;
+                        overflow: auto;
+                        font-family: 'Calibri', 'Arial', sans-serif;
+                        font-size: 11pt;
+                        line-height: 1.5;
+                        color: black;
+                    ">
+                        ${result.value}
+                    </div>
+                </div>
+            `;
+        }
         
     } catch (error) {
         console.error('Error updating preview with template:', error);

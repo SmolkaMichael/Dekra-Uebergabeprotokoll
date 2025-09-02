@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEKRA Gutachten-Erstellungs-App</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="print.css" media="print">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Linke Seite: Eingabeformular -->
+        <div class="form-panel">
+            <h2>Gutachten-Daten eingeben</h2>
+
+            <form id="gutachtenForm">
+                <!-- Kopfbereich Daten -->
+                <fieldset class="form-section">
+                    <legend>Kopfdaten</legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="gutachtenNummer">Gutachten-Nr.</label>
+                            <input type="text" id="gutachtenNummer" name="gutachtenNummer" placeholder="511 CJB" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="datum">Datum</label>
+                            <input type="date" id="datum" name="datum" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="auftraggeber">Auftraggeber</label>
+                            <input type="text" id="auftraggeber" name="auftraggeber" placeholder="Name des Auftraggebers" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="kundenNummer">Kunden-Nr.</label>
+                            <input type="text" id="kundenNummer" name="kundenNummer" placeholder="z.B. 123456">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Empfänger-Adresse -->
+                <fieldset class="form-section">
+                    <legend>Empfänger-Adresse</legend>
+                    
+                    <div class="form-group">
+                        <label for="empfaengerName">Name/Firma</label>
+                        <input type="text" id="empfaengerName" name="empfaengerName" placeholder="z.B. KPB Neuss" value="KPB Neuss" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="empfaengerStrasse">Straße und Hausnummer</label>
+                        <input type="text" id="empfaengerStrasse" name="empfaengerStrasse" placeholder="z.B. Holbeinstraße 4" value="Holbeinstraße 4" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group" style="width: 30%;">
+                            <label for="empfaengerPLZ">PLZ</label>
+                            <input type="text" id="empfaengerPLZ" name="empfaengerPLZ" placeholder="40667" value="40667" required>
+                        </div>
+                        <div class="form-group" style="width: 68%;">
+                            <label for="empfaengerOrt">Ort</label>
+                            <input type="text" id="empfaengerOrt" name="empfaengerOrt" placeholder="Meerbusch" value="Meerbusch" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Gutachten Details -->
+                <fieldset class="form-section">
+                    <legend>Gutachten-Details</legend>
+                    
+                    <div class="form-group">
+                        <label for="aktenzeichen">Aktenzeichen</label>
+                        <input type="text" id="aktenzeichen" name="aktenzeichen" placeholder="Az.: ..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="beteiligte">Beteiligte/Sache</label>
+                        <textarea id="beteiligte" name="beteiligte" rows="2" placeholder="Namen der Beteiligten" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="auftragVom">Auftrag vom</label>
+                        <input type="date" id="auftragVom" name="auftragVom" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="besichtigungsdatum">Besichtigungsdatum</label>
+                        <input type="date" id="besichtigungsdatum" name="besichtigungsdatum" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="besichtigungsort">Besichtigungsort</label>
+                        <input type="text" id="besichtigungsort" name="besichtigungsort" placeholder="Ort der Besichtigung" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sachverstaendiger">Sachverständiger</label>
+                        <input type="text" id="sachverstaendiger" name="sachverstaendiger" placeholder="Name des Sachverständigen" required>
+                    </div>
+                </fieldset>
+
+                <!-- Anhänge -->
+                <fieldset class="form-section">
+                    <legend>Anhänge</legend>
+                    
+                    <div class="form-group">
+                        <label for="fileUpload">Dokumente hinzufügen (PDF, Word, Bilder)</label>
+                        <input type="file" id="fileUpload" name="fileUpload" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+                </fieldset>
+
+                <!-- Aktionen -->
+                <div class="form-actions">
+                    <button type="button" id="exportPdf" class="btn-primary">PDF exportieren</button>
+                    <button type="button" id="exportWord" class="btn-primary">Word exportieren</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Rechte Seite: Live-Vorschau im Word-Style -->
+        <div class="preview-panel">
+            <div class="preview-header">
+                <h2>Live-Vorschau (Word-Dokument Style)</h2>
+            </div>
+            <div id="pdfPreview" class="pdf-preview">
+                <div class="preview-page" id="previewContent">
+                    <!-- Word-Style Vorschau wird hier generiert -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Progress Indicator -->
+    <div id="progressIndicator" class="progress-indicator hidden">
+        <div class="progress-bar">
+            <div class="progress-fill"></div>
+        </div>
+        <p class="progress-text">Exportiere Dokument...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

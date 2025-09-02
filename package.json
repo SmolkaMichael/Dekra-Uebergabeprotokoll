@@ -1,0 +1,21 @@
+{
+  "name": "dekra-gutachten-app",
+  "version": "1.0.0",
+  "description": "DEKRA Gutachten-Erstellungs-App für Unfallgutachten",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve",
+    "build": "echo 'No build needed for static site'"
+  },
+  "keywords": [
+    "dekra",
+    "gutachten",
+    "accident",
+    "report"
+  ],
+  "author": "Matthias Smolka",
+  "license": "ISC",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}

@@ -1,0 +1,476 @@
+/* DEKRA Gutachten-App - Word Document Style */
+
+:root {
+    --dekra-blue: #1F4788;
+    --dekra-dark-blue: #0F2B5B;
+    --table-border: #000000;
+    --text-black: #000000;
+    --bg-gray: #F5F5F5;
+    --border-gray: #D4D4D4;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    background-color: #E0E0E0;
+    color: var(--text-black);
+    font-size: 11pt;
+}
+
+/* App Container */
+.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Form Panel (Left Side) */
+.form-panel {
+    width: 40%;
+    background: white;
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 2px solid var(--border-gray);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.form-panel h2 {
+    color: var(--dekra-blue);
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 2px solid var(--dekra-blue);
+    padding-bottom: 10px;
+}
+
+/* Form Sections */
+.form-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    border: 1px solid var(--border-gray);
+    border-radius: 5px;
+    background: var(--bg-gray);
+}
+
+legend {
+    color: var(--dekra-blue);
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0 10px;
+    background: white;
+}
+
+/* Form Rows for two-column layout */
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-black);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="file"],
+textarea,
+select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--border-gray);
+    border-radius: 3px;
+    font-size: 12px;
+    font-family: 'Calibri', 'Arial', sans-serif;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--dekra-blue);
+    box-shadow: 0 0 3px rgba(31, 71, 136, 0.3);
+}
+
+textarea {
+    resize: vertical;
+    min-height: 50px;
+}
+
+/* Buttons */
+button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 3px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-right: 8px;
+    margin-top: 5px;
+}
+
+.btn-primary {
+    background: var(--dekra-blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--dekra-dark-blue);
+}
+
+.btn-secondary {
+    background: #6C757D;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #5A6268;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border-gray);
+}
+
+/* File List */
+.file-list {
+    margin-top: 10px;
+    padding: 10px;
+    background: white;
+    border: 1px solid var(--border-gray);
+    border-radius: 3px;
+    min-height: 50px;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 5px;
+    background: var(--bg-gray);
+    border-radius: 3px;
+}
+
+.file-name {
+    flex: 1;
+    font-size: 12px;
+}
+
+.file-size {
+    color: #666;
+    font-size: 11px;
+    margin-left: 10px;
+}
+
+.remove-file {
+    background: #DC3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+/* Preview Panel (Right Side) - Word Document Style */
+.preview-panel {
+    width: 60%;
+    background: #525659;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    background: white;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-gray);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-header h2 {
+    color: var(--dekra-blue);
+    font-size: 16px;
+}
+
+.preview-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.zoom-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+}
+
+#zoomLevel {
+    font-size: 13px;
+    color: var(--text-black);
+    min-width: 45px;
+    text-align: center;
+}
+
+/* PDF Preview - Word Style */
+.pdf-preview {
+    flex: 1;
+    padding: 30px;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #525659;
+    /* Prevent browser zoom from affecting preview */
+    zoom: reset;
+}
+
+.preview-page {
+    background: white;
+    width: 210mm;
+    min-height: 297mm;
+    padding: 25mm 20mm 25mm 25mm; /* Mehr Rand: oben, rechts, unten, links */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    transform-origin: top center;
+    transition: transform 0.3s ease;
+    font-family: Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: black;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* Fix scaling - keep A4 size constant */
+    zoom: 1 !important;
+    -moz-transform: scale(1);
+    -moz-transform-origin: top center;
+}
+
+/* Word Document Table Style */
+.word-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 11pt;
+}
+
+.word-table td {
+    border: 1px solid black;
+    padding: 3px 5px;
+    vertical-align: top;
+    height: auto;
+    min-height: 0.5cm;
+}
+
+.word-table .label-cell {
+    width: 35%;
+    font-weight: normal;
+    background: white;
+}
+
+.word-table .value-cell {
+    width: 65%;
+    font-weight: normal;
+    background: white;
+}
+
+/* DEKRA Header in Preview */
+.word-header {
+    margin-bottom: 0;
+}
+
+.word-header-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.word-header-table td {
+    padding: 0;
+    vertical-align: top;
+}
+
+.dekra-logo-text {
+    font-size: 24pt;
+    font-weight: bold;
+    color: var(--dekra-blue);
+    font-family: 'Arial Black', sans-serif;
+}
+
+.header-right {
+    text-align: right;
+    font-size: 10pt;
+    line-height: 1.2;
+}
+
+.header-address {
+    margin-bottom: 10px;
+}
+
+.gutachten-info {
+    margin-top: 5px;
+}
+
+/* Gutachten Title */
+.gutachten-title {
+    text-align: center;
+    font-size: 14pt;
+    font-weight: bold;
+    margin: 20px 0;
+    letter-spacing: 0.5px;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 5px;
+    width: 60%;
+    max-width: 600px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+    color: #666;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: var(--dekra-blue);
+}
+
+/* Progress Indicator */
+.progress-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    z-index: 2000;
+    min-width: 300px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: var(--bg-gray);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: var(--dekra-blue);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+.progress-text {
+    text-align: center;
+    color: var(--text-black);
+    font-size: 13px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .form-panel {
+        width: 45%;
+    }
+    
+    .preview-panel {
+        width: 55%;
+    }
+    
+    .preview-page {
+        transform: scale(0.9);
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+    
+    .form-panel,
+    .preview-panel {
+        width: 100%;
+        height: 50vh;
+    }
+    
+    .preview-page {
+        transform: scale(0.7);
+    }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--dekra-blue);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--dekra-dark-blue);
+}

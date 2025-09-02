@@ -247,17 +247,18 @@ button {
 .pdf-preview {
     flex: 1;
     padding: 30px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
     background: #525659;
 }
 
 .preview-page {
     background: white;
     width: 210mm;
-    height: 297mm;
+    min-height: 297mm;
     padding: 25mm 20mm 25mm 25mm; /* Mehr Rand: oben, rechts, unten, links */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transform-origin: top center;
@@ -271,8 +272,8 @@ button {
     flex-direction: column;
     box-sizing: border-box;
     /* Scale for better fit in viewport */
-    transform: scale(0.65);
-    overflow: hidden;
+    transform: scale(0.75);
+    margin-bottom: 40px;
 }
 
 /* Word Document Table Style */

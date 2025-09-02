@@ -389,7 +389,7 @@ function updateLivePreview() {
                 attachmentPage.style.cssText = `
                     background: white;
                     width: 210mm;
-                    height: 297mm;
+                    min-height: 297mm;
                     padding: 25mm 20mm 25mm 25mm;
                     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
                     transform-origin: top center;
@@ -401,8 +401,8 @@ function updateLivePreview() {
                     display: flex;
                     flex-direction: column;
                     box-sizing: border-box;
-                    transform: scale(0.65);
-                    margin-top: 30px;
+                    transform: scale(0.75);
+                    margin-bottom: 40px;
                 `;
                 
                 if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
@@ -1327,67 +1327,166 @@ async function exportToWord() {
             
             // Process each attachment
             for (const file of appState.attachedFiles) {
-                // For Word documents, add complete content pages
+                // For Word documents, try to read and append content
                 if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
                     file.type === 'application/msword' || 
                     file.name.endsWith('.docx') || 
                     file.name.endsWith('.doc')) {
                     
-                    // Add multiple pages to simulate Word document content
-                    doc.addSection({
-                        children: [
-                            new Paragraph({ text: "", spacing: { before: 600 } }),
+                    try {
+                        // Read the Word file content using mammoth.js
+                        const arrayBuffer = await file.arrayBuffer();
+                        
+                        // Convert Word document to HTML using mammoth
+                        const result = await mammoth.convertToHtml({arrayBuffer: arrayBuffer});
+                        const htmlContent = result.value;
+                        
+                        // Parse HTML to extract text content
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = htmlContent;
+                        
+                        // Extract paragraphs and create Word paragraphs
+                        const paragraphs = [];
+                        
+                        // Add title for attachment
+                        paragraphs.push(
                             new Paragraph({
                                 children: [
                                     new TextRun({
-                                        text: `--- Beginn Anhang: ${file.name} ---`,
+                                        text: "",
+                                        break: 1 // Page break
+                                    })
+                                ]
+                            }),
+                            new Paragraph({
+                                children: [
+                                    new TextRun({
+                                        text: `--- ${file.name} ---`,
                                         bold: true,
                                         size: 28
                                     })
                                 ],
                                 alignment: AlignmentType.CENTER,
-                                spacing: { after: 600 }
-                            }),
-                            new Paragraph({
-                                children: [
-                                    new TextRun({
-                                        text: "[Inhalt des Word-Dokuments wird hier eingefügt]",
-                                        size: 24,
-                                        italics: true
-                                    })
-                                ],
                                 spacing: { after: 400 }
-                            }),
-                            new Paragraph({
-                                children: [
-                                    new TextRun({
-                                        text: "Der Inhalt dieses Word-Dokuments ist Teil des Gutachtens.",
-                                        size: 22
-                                    })
-                                ],
-                                spacing: { after: 200 }
-                            }),
-                            new Paragraph({
-                                children: [
-                                    new TextRun({
-                                        text: `Dokumentgröße: ${formatFileSize(file.size)}`,
-                                        size: 20
-                                    })
-                                ],
-                                spacing: { after: 800 }
-                            }),
-                            new Paragraph({
-                                children: [
-                                    new TextRun({
-                                        text: `--- Ende Anhang: ${file.name} ---`,
-                                        bold: true,
-                                        size: 28
-                                    })
-                                ],
-                                alignment: AlignmentType.CENTER
                             })
-                        ]
-                    });
+                        );
+                        
+                        // Process all paragraphs from the HTML
+                        const htmlParagraphs = tempDiv.querySelectorAll('p, h1, h2, h3, h4, h5, h6, li');
+                        htmlParagraphs.forEach(element => {
+                            const text = element.textContent.trim();
+                            if (text) {
+                                // Check if it's a heading
+                                const isHeading = element.tagName.startsWith('H');
+                                const isList = element.tagName === 'LI';
+                                
+                                paragraphs.push(
+                                    new Paragraph({
+                                        children: [
+                                            new TextRun({
+                                                text: isList ? `• ${text}` : text,
+                                                bold: isHeading,
+                                                size: isHeading ? 28 : 22
+                                            })
+                                        ],
+                                        spacing: { after: isHeading ? 400 : 200 }
+                                    })
+                                );
+                            }
+                        });
+                        
+                        // If no paragraphs found, add the raw text
+                        if (paragraphs.length === 2) {
+                            const fullText = tempDiv.textContent.trim();
+                            if (fullText) {
+                                // Split by newlines and add as paragraphs
+                                const lines = fullText.split('\n').filter(line => line.trim());
+                                lines.forEach(line => {
+                                    paragraphs.push(
+                                        new Paragraph({
+                                            children: [
+                                                new TextRun({
+                                                    text: line,
+                                                    size: 22
+                                                })
+                                            ],
+                                            spacing: { after: 200 }
+                                        })
+                                    );
+                                });
+                            }
+                        }
+                        
+                        // Add all paragraphs to the document
+                        doc.addSection({
+                            children: paragraphs
+                        });
+                    } catch (error) {
+                        console.error('Error reading Word document with mammoth:', error);
+                        // Fallback if mammoth.js fails - add placeholder
+                        doc.addSection({
+                            children: [
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: "",
+                                            break: 1 // Page break
+                                        })
+                                    ]
+                                }),
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: `--- ${file.name} ---`,
+                                            bold: true,
+                                            size: 28
+                                        })
+                                    ],
+                                    alignment: AlignmentType.CENTER,
+                                    spacing: { after: 400 }
+                                }),
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: `[Fehler beim Lesen des Word-Dokuments]`,
+                                            italics: true,
+                                            size: 22,
+                                            color: "FF0000"
+                                        })
+                                    ],
+                                    alignment: AlignmentType.CENTER,
+                                    spacing: { after: 400 }
+                                }),
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: `Das Dokument "${file.name}" konnte nicht automatisch gelesen werden.`,
+                                            size: 22
+                                        })
+                                    ],
+                                    spacing: { after: 200 }
+                                }),
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: `Dateigröße: ${formatFileSize(file.size)}`,
+                                            size: 20
+                                        })
+                                    ],
+                                    spacing: { after: 200 }
+                                }),
+                                new Paragraph({
+                                    children: [
+                                        new TextRun({
+                                            text: `Bitte fügen Sie den Inhalt manuell ein.`,
+                                            size: 22,
+                                            italics: true
+                                        })
+                                    ]
+                                })
+                            ]
+                        });
+                    }
                 } else {
                     // For other file types, add info page
                     doc.addSection({

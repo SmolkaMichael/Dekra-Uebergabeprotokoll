@@ -258,7 +258,7 @@ button {
 .preview-page {
     background: white;
     width: 210mm;
-    min-height: 450mm; /* VIEL länger für korrekte Proportionen ohne Überlappung */
+    min-height: 400mm; /* Optimal für Vorschau ohne Überlappung */
     padding: 30mm 25mm 40mm 30mm; /* Größere Ränder für bessere Darstellung */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transform-origin: top center;
@@ -272,7 +272,7 @@ button {
     flex-direction: column;
     box-sizing: border-box;
     /* Scale for better fit in viewport */
-    transform: scale(0.55); /* Kleiner skaliert wegen größerer Seite */
+    transform: scale(0.6); /* Angepasste Skalierung */
     margin-bottom: 50px;
 }
 

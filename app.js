@@ -395,7 +395,7 @@ function updateLivePreview() {
                 attachmentPage.style.cssText = `
                     background: white;
                     width: 210mm;
-                    min-height: 450mm;
+                    min-height: 400mm;
                     padding: 30mm 25mm 40mm 30mm;
                     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
                     transform-origin: top center;
@@ -407,7 +407,7 @@ function updateLivePreview() {
                     display: flex;
                     flex-direction: column;
                     box-sizing: border-box;
-                    transform: scale(0.55);
+                    transform: scale(0.6);
                     margin-bottom: 50px;
                 `;
                 
@@ -1545,8 +1545,8 @@ async function exportToWord() {
                     });
                 }
             }
-            */
         }
+        */
         
         // Generate and download
         const blob = await Packer.toBlob(doc);

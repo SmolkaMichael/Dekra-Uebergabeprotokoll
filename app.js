@@ -156,26 +156,35 @@ async function updateLivePreview() {
             overflow: auto;
         `;
         
-        // Use docx-preview to render the Word document
-        await docxPreview.renderAsync(buf, previewContent, null, {
-            className: 'docx-preview',
-            inWrapper: true,
-            ignoreWidth: false,
-            ignoreHeight: false,
-            ignoreFonts: false,
-            breakPages: true,
-            ignoreLastRenderedPageBreak: true,
-            experimental: true,
-            trimXmlDeclaration: true,
-            useBase64URL: true,
-            renderHeaders: true,
-            renderFooters: true,
-            renderFootnotes: true,
-            renderEndnotes: true
-        });
+        // Use mammoth to display Word template (most reliable)
+        console.log('Rendering Word template with mammoth...');
+        const result = await mammoth.convertToHtml({arrayBuffer: buf});
+        
+        // Style the Word content to look like a real document
+        previewContent.innerHTML = `
+            <div style="
+                background: white;
+                padding: 40px;
+                max-width: 800px;
+                margin: 0 auto;
+                font-family: 'Times New Roman', serif;
+                font-size: 12pt;
+                line-height: 1.5;
+                color: black;
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+                min-height: 100%;
+            ">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <h2 style="color: #1F4788;">DEKRA Gutachten</h2>
+                </div>
+                ${result.value}
+            </div>
+        `;
         
     } catch (error) {
         console.error('Error updating preview with template:', error);
+        // Pass formData to the fallback function
+        const formData = collectFormData();
         updateHtmlPreview(formData);
     }
 }

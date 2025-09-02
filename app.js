@@ -86,7 +86,7 @@ function handleFormInput(event) {
     saveToLocalStorage();
 }
 
-// Update Live Preview with MATTHIAS TEMPLATE
+// Update Live Preview with MATTHIAS TEMPLATE using Microsoft Office Online
 async function updateLivePreview() {
     const previewContent = document.getElementById('previewContent');
     if (!previewContent) {
@@ -97,89 +97,22 @@ async function updateLivePreview() {
     try {
         const formData = collectFormData();
         
-        // Show loading message
-        previewContent.innerHTML = '<div style="padding: 50px; text-align: center;"><h3>Lade MatthiasVorlage.docx...</h3></div>';
+        // Use Microsoft Office Online Viewer for EXACT Word display
+        // This shows the document EXACTLY like in Microsoft Word!
+        const templateUrl = 'https://raw.githubusercontent.com/SmolkaMichael/Dekra-Uebergabeprotokoll/main/MatthiasVorlage.docx';
+        const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(templateUrl)}`;
         
-        // Load and render the MatthiasVorlage.docx template
-        const templateResponse = await fetch('./MatthiasVorlage.docx');
-        if (!templateResponse.ok) {
-            console.error('MatthiasVorlage.docx konnte nicht geladen werden');
-            previewContent.innerHTML = '<div style="padding: 50px; text-align: center; color: red;"><h3>MatthiasVorlage.docx nicht gefunden!</h3><p>Bitte stelle sicher, dass die Datei vorhanden ist.</p></div>';
-            return;
-        }
-        
-        const templateArrayBuffer = await templateResponse.arrayBuffer();
-        const zip = new PizZip(templateArrayBuffer);
-        const doc = new window.docxtemplater(zip, {
-            paragraphLoop: true,
-            linebreaks: true,
-        });
-        
-        // Prepare data for template
-        const templateData = {
-            gutachtenNummer: formData.gutachtenNummer || '[Gutachten-Nr.]',
-            datum: formatDateLong(formData.datum) || '[Datum]',
-            auftraggeber: formData.auftraggeber || '[Auftraggeber]',
-            kundenNummer: formData.kundenNummer || '[Kunden-Nr.]',
-            empfaengerName: formData.empfaengerName || '[Empfänger Name]',
-            empfaengerStrasse: formData.empfaengerStrasse || '[Straße]',
-            empfaengerPLZ: formData.empfaengerPLZ || '[PLZ]',
-            empfaengerOrt: formData.empfaengerOrt || '[Ort]',
-            aktenzeichen: formData.aktenzeichen || '[Aktenzeichen]',
-            beteiligte: formData.beteiligte || '[Beteiligte]',
-            auftragVom: formatDate(formData.auftragVom) || '[Auftrag vom]',
-            besichtigungsdatum: formatDate(formData.besichtigungsdatum) || '[Besichtigungsdatum]',
-            besichtigungsort: formData.besichtigungsort || '[Besichtigungsort]',
-            sachverstaendiger: formData.sachverstaendiger || '[Sachverständiger]'
-        };
-        
-        // Fill template with data
-        doc.setData(templateData);
-        
-        try {
-            doc.render();
-        } catch (error) {
-            console.log('Template render info:', error);
-        }
-        
-        // Generate filled document
-        const buf = doc.getZip().generate({
-            type: 'arraybuffer'
-        });
-        
-        // Clear preview and render the Word document
-        previewContent.innerHTML = '';
-        previewContent.style.cssText = `
-            width: 100%;
-            height: 100%;
-            background: white;
-            overflow: auto;
-        `;
-        
-        // Use mammoth to display Word template (most reliable)
-        console.log('Rendering Word template with mammoth...');
-        const result = await mammoth.convertToHtml({arrayBuffer: buf});
-        
-        // Style the Word content to look like a real document
         previewContent.innerHTML = `
-            <div style="
-                background: white;
-                padding: 40px;
-                max-width: 800px;
-                margin: 0 auto;
-                font-family: 'Times New Roman', serif;
-                font-size: 12pt;
-                line-height: 1.5;
-                color: black;
-                box-shadow: 0 0 10px rgba(0,0,0,0.1);
-                min-height: 100%;
-            ">
-                <div style="text-align: center; margin-bottom: 30px;">
-                    <h2 style="color: #1F4788;">DEKRA Gutachten</h2>
-                </div>
-                ${result.value}
-            </div>
+            <iframe 
+                src="${viewerUrl}"
+                width="100%" 
+                height="100%" 
+                frameborder="0"
+                style="min-height: 800px; border: none;">
+                Dies ist eine Office Online-Vorschau.
+            </iframe>
         `;
+        
         
     } catch (error) {
         console.error('Error updating preview with template:', error);

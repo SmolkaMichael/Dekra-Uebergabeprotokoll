@@ -101,9 +101,9 @@ function updateLivePreview() {
             flex-direction: column;
             box-sizing: border-box;
         `;
-    
-    // Create the exact professional layout
-    previewContent.innerHTML = `
+        
+        // Create the exact professional layout
+        previewContent.innerHTML = `
         <style>
             .preview-page * {
                 margin: 0;

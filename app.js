@@ -395,20 +395,20 @@ function updateLivePreview() {
                 attachmentPage.style.cssText = `
                     background: white;
                     width: 210mm;
-                    min-height: 350mm;
-                    padding: 25mm 20mm 35mm 25mm;
+                    min-height: 450mm;
+                    padding: 30mm 25mm 40mm 30mm;
                     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
                     transform-origin: top center;
                     font-family: Arial, sans-serif;
                     font-size: 16pt;
-                    line-height: 1.6;
+                    line-height: 1.8;
                     color: black;
                     position: relative;
                     display: flex;
                     flex-direction: column;
                     box-sizing: border-box;
-                    transform: scale(0.65);
-                    margin-bottom: 40px;
+                    transform: scale(0.55);
+                    margin-bottom: 50px;
                 `;
                 
                 if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
@@ -1303,6 +1303,9 @@ async function exportToWord() {
             }]
         });
         
+        // KEINE Anhänge im Word-Export - nur die ausgefüllte Vorlage!
+        // Der folgende Code ist komplett deaktiviert:
+        /*
         // Add attachment pages if there are attachments
         if (appState.attachedFiles.length > 0) {
             // Add separator page
@@ -1331,9 +1334,6 @@ async function exportToWord() {
                 ]
             });
             
-            // KEINE Anhänge im Word-Export - nur die ausgefüllte Vorlage!
-            // Anhänge werden NICHT in Word eingefügt
-            /*
             // Process each attachment - DEAKTIVIERT
             for (const file of appState.attachedFiles) {
                 // For Word documents, try to read and append content

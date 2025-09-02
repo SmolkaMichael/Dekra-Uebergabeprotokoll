@@ -258,22 +258,22 @@ button {
 .preview-page {
     background: white;
     width: 210mm;
-    min-height: 350mm; /* Länger gemacht für weniger gestauchtes Aussehen */
-    padding: 25mm 20mm 35mm 25mm; /* Mehr Rand unten für bessere Proportionen */
+    min-height: 450mm; /* VIEL länger für korrekte Proportionen ohne Überlappung */
+    padding: 30mm 25mm 40mm 30mm; /* Größere Ränder für bessere Darstellung */
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     transform-origin: top center;
     transition: transform 0.3s ease;
     font-family: Arial, sans-serif;
     font-size: 16pt;
-    line-height: 1.6;
+    line-height: 1.8;
     color: black;
     position: relative;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
     /* Scale for better fit in viewport */
-    transform: scale(0.65); /* Etwas kleiner skaliert für bessere Ansicht */
-    margin-bottom: 40px;
+    transform: scale(0.55); /* Kleiner skaliert wegen größerer Seite */
+    margin-bottom: 50px;
 }
 
 /* Word Document Table Style */

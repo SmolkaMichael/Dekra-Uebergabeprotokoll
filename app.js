@@ -305,28 +305,33 @@ function updateHtmlPreview(formData) {
             .header {
                 text-align: left;
                 padding-bottom: 10px;
-                border-bottom: 2px solid black;
+                border-bottom: 1px solid #999; /* Dünne graue Linie */
                 margin-bottom: 15px;
                 position: relative;
+                color: #999; /* ALLES in GRAU */
             }
             
             .header .company-name {
-                font-weight: bold;
-                font-size: 22pt;
+                font-weight: normal; /* NICHT fett! */
+                font-size: 10pt; /* Klein wie in Word */
                 margin-bottom: 5px;
+                color: #999; /* GRAU */
             }
             
             .header .department {
-                font-size: 18pt;
+                font-size: 10pt; /* Klein wie in Word */
                 margin-bottom: 3px;
+                font-weight: normal; /* NICHT fett! */
+                color: #999; /* GRAU */
             }
             
             .header .contact {
-                font-size: 16pt;
-                color: #333;
+                font-size: 9pt; /* Klein wie in Word */
+                color: #999; /* GRAU statt schwarz */
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+                font-weight: normal; /* NICHT fett! */
             }
             
             .page-indicator {
@@ -419,9 +424,10 @@ function updateHtmlPreview(formData) {
             /* FUSSZEILE */
             .footer {
                 margin-top: auto;
-                border-top: 1px solid #666;
+                /* KEINE untere Linie! */
                 padding-top: 10px;
                 font-size: 7pt;
+                color: #999; /* GRAU statt schwarz */
                 line-height: 1.3;
                 color: #444;
             }
@@ -528,7 +534,7 @@ function updateHtmlPreview(formData) {
         <footer class="footer">
             <div class="footer-content">
                 <div class="footer-column">
-                    <h4>DEKRA Automobil GmbH</h4>
+                    <p style="color: #999; font-weight: normal;">DEKRA Automobil GmbH</p>
                     <p>Handwerkstraße 15</p>
                     <p>D-70565 Stuttgart</p>
                     <p>Telefon (07 11) 78 61-0</p>
@@ -548,7 +554,7 @@ function updateHtmlPreview(formData) {
                 </div>
                 
                 <div class="footer-column">
-                    <h4>Vorsitzender des Aufsichtsrates:</h4>
+                    <p style="color: #999; font-weight: normal;">Vorsitzender des Aufsichtsrates:</p>
                     <p>Stefan Kölbl</p>
                     <br>
                     <h4>Geschäftsführer:</h4>

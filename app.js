@@ -175,7 +175,7 @@ async function updateLivePreview() {
             // EXAKTE Word-Vorlage Formatierung - wie MatthiasVorlage.docx
             previewContent.innerHTML = `
                 <div style="height: 100%; overflow: auto; background: #f5f5f5; padding: 20px;">
-                    <div class="word-page" style="
+                    <div class="word-page preview-page" style="
                         width: 210mm;
                         min-height: 297mm;
                         margin: 0 auto;

@@ -27,11 +27,14 @@ body {
     display: flex;
     height: 100vh;
     overflow: hidden;
+    position: relative;
 }
 
 /* Form Panel (Left Side) */
 .form-panel {
     width: 40%;
+    min-width: 300px;
+    max-width: 600px;
     background: white;
     padding: 20px;
     overflow-y: auto;
@@ -424,34 +427,151 @@ button {
     display: none !important;
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
+/* Responsive - Für alle Bildschirmgrößen optimiert */
+
+/* Kleine Laptops (1366px und kleiner) */
+@media (max-width: 1366px) {
     .form-panel {
-        width: 45%;
+        width: 35%;
+        min-width: 280px;
+        padding: 15px;
     }
     
     .preview-panel {
-        width: 55%;
+        width: 65%;
     }
     
     .preview-page {
-        transform: scale(0.9);
+        transform: scale(0.8);
+        transform-origin: top center;
+    }
+    
+    /* Kleinere Schrift für Formulare */
+    .form-group label {
+        font-size: 11px;
+    }
+    
+    input, textarea, select {
+        font-size: 11px;
+        padding: 6px;
+    }
+    
+    button {
+        font-size: 12px;
+        padding: 6px 12px;
     }
 }
 
-@media (max-width: 768px) {
+/* Tablets im Landscape (1024px) */
+@media (max-width: 1024px) {
     .app-container {
-        flex-direction: column;
+        height: 100vh;
+        overflow-x: hidden;
     }
     
-    .form-panel,
+    .form-panel {
+        width: 40%;
+        min-width: 320px;
+    }
+    
     .preview-panel {
-        width: 100%;
-        height: 50vh;
+        width: 60%;
     }
     
     .preview-page {
         transform: scale(0.7);
+        transform-origin: top center;
+    }
+    
+    /* Preview scrollbar anpassen */
+    #previewContent {
+        overflow: auto;
+        height: 100%;
+    }
+}
+
+/* Tablets Portrait & Große Phones (768px) */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+    }
+    
+    .form-panel {
+        width: 100%;
+        max-width: 100%;
+        min-width: unset;
+        height: auto;
+        min-height: 400px;
+        border-right: none;
+        border-bottom: 2px solid var(--border-gray);
+    }
+    
+    .preview-panel {
+        width: 100%;
+        height: 600px;
+        position: relative;
+    }
+    
+    .preview-page {
+        transform: scale(0.5);
+        transform-origin: top center;
+    }
+    
+    /* Buttons nebeneinander auf mobil */
+    .action-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        padding: 10px;
+    }
+    
+    button {
+        flex: 1;
+        min-width: 120px;
+        margin: 5px;
+    }
+}
+
+/* Smartphones (480px und kleiner) */
+@media (max-width: 480px) {
+    .form-panel {
+        padding: 10px;
+    }
+    
+    .form-panel h2 {
+        font-size: 16px;
+    }
+    
+    .form-group {
+        margin-bottom: 12px;
+    }
+    
+    button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .preview-page {
+        transform: scale(0.4);
+        transform-origin: top left;
+        margin-left: 10px;
+    }
+    
+    /* Zoom-Controls verkleinern */
+    .zoom-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+    }
+}
+
+/* Sehr kleine Bildschirme (320px) */
+@media (max-width: 320px) {
+    .preview-page {
+        transform: scale(0.3);
     }
 }
 

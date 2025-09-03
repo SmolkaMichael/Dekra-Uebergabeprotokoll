@@ -86,7 +86,7 @@ function handleFormInput(event) {
     saveToLocalStorage();
 }
 
-// Update Live Preview with MATTHIAS TEMPLATE
+// Update Live Preview with MATTHIAS TEMPLATE - PERFEKTE FORMATIERUNG
 async function updateLivePreview() {
     const previewContent = document.getElementById('previewContent');
     if (!previewContent) {
@@ -97,7 +97,7 @@ async function updateLivePreview() {
     try {
         const formData = collectFormData();
         
-        // First, check if we have actual data to show
+        // Check if we have data
         const hasData = Object.values(formData).some(value => value && value.trim() !== '');
         
         if (!hasData) {
@@ -169,25 +169,75 @@ async function updateLivePreview() {
                 type: 'arraybuffer'
             });
             
-            // Convert to HTML using mammoth for preview
+            // PERFEKTE WORD-FORMATIERUNG - Exakte Nachbildung
             const result = await mammoth.convertToHtml({arrayBuffer: buf});
             
+            // Word-Standard Formatierung (A4, Standard-Ränder)
             previewContent.innerHTML = `
                 <div style="height: 100%; display: flex; flex-direction: column;">
-                    <div style="background: #28a745; color: white; padding: 10px; text-align: center;">
-                        <strong>Live-Vorschau mit deinen Daten</strong>
+                    <div style="background: #1F4788; color: white; padding: 10px; text-align: center; font-family: Arial, sans-serif;">
+                        <strong>📄 Live-Vorschau - EXAKTE Word-Formatierung</strong>
                     </div>
                     <div style="
                         flex: 1;
-                        background: white;
-                        padding: 40px;
+                        background: #e0e0e0;
                         overflow: auto;
-                        font-family: 'Calibri', 'Arial', sans-serif;
-                        font-size: 11pt;
-                        line-height: 1.5;
-                        color: black;
+                        padding: 20px;
+                        display: flex;
+                        justify-content: center;
                     ">
-                        ${result.value}
+                        <div class="word-page" style="
+                            width: 210mm;
+                            min-height: 297mm;
+                            padding: 25.4mm 25.4mm 25.4mm 31.7mm;
+                            background: white;
+                            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+                            font-family: 'Calibri', 'Arial', sans-serif;
+                            font-size: 11pt;
+                            line-height: 1.15;
+                            color: black;
+                            position: relative;
+                        ">
+                            <style>
+                                /* Word-spezifische Styles */
+                                .word-page p { 
+                                    margin: 0 0 11pt 0; 
+                                    text-align: justify;
+                                }
+                                .word-page h1 { 
+                                    font-size: 16pt; 
+                                    font-weight: bold; 
+                                    margin: 0 0 12pt 0;
+                                }
+                                .word-page h2 { 
+                                    font-size: 14pt; 
+                                    font-weight: bold; 
+                                    margin: 0 0 11pt 0;
+                                }
+                                .word-page table {
+                                    border-collapse: collapse;
+                                    width: 100%;
+                                    margin: 0 0 11pt 0;
+                                }
+                                .word-page td, .word-page th {
+                                    border: 1px solid black;
+                                    padding: 3pt 7pt;
+                                    vertical-align: top;
+                                }
+                                /* Seitenränder-Linien (wie in Word) */
+                                .word-page::before {
+                                    content: '';
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    right: 0;
+                                    height: 25.4mm;
+                                    border-bottom: 1px dotted #ccc;
+                                    pointer-events: none;
+                                }
+                            </style>
+                            ${result.value}
+                        </div>
                     </div>
                 </div>
             `;

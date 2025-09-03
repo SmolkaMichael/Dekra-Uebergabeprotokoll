@@ -172,71 +172,85 @@ async function updateLivePreview() {
             // PERFEKTE WORD-FORMATIERUNG - Exakte Nachbildung
             const result = await mammoth.convertToHtml({arrayBuffer: buf});
             
-            // Word-Standard Formatierung (A4, Standard-Ränder)
+            // EXAKTE Word-Vorlage Formatierung - wie MatthiasVorlage.docx
             previewContent.innerHTML = `
-                <div style="height: 100%; display: flex; flex-direction: column;">
-                    <div style="background: #1F4788; color: white; padding: 10px; text-align: center; font-family: Arial, sans-serif;">
-                        <strong>📄 Live-Vorschau - EXAKTE Word-Formatierung</strong>
-                    </div>
-                    <div style="
-                        flex: 1;
-                        background: #e0e0e0;
-                        overflow: auto;
-                        padding: 20px;
-                        display: flex;
-                        justify-content: center;
+                <div style="height: 100%; overflow: auto; background: #f5f5f5; padding: 20px;">
+                    <div class="word-page" style="
+                        width: 210mm;
+                        min-height: 297mm;
+                        margin: 0 auto;
+                        background: white;
+                        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+                        font-family: 'Calibri', 'Arial', sans-serif;
+                        font-size: 11pt;
+                        line-height: 1.15;
+                        color: black;
+                        position: relative;
+                        padding: 0;
                     ">
-                        <div class="word-page" style="
-                            width: 210mm;
-                            min-height: 297mm;
-                            padding: 25.4mm 25.4mm 25.4mm 31.7mm;
-                            background: white;
-                            box-shadow: 0 0 20px rgba(0,0,0,0.2);
-                            font-family: 'Calibri', 'Arial', sans-serif;
-                            font-size: 11pt;
-                            line-height: 1.15;
-                            color: black;
-                            position: relative;
-                        ">
-                            <style>
-                                /* Word-spezifische Styles */
-                                .word-page p { 
-                                    margin: 0 0 11pt 0; 
-                                    text-align: justify;
-                                }
-                                .word-page h1 { 
-                                    font-size: 16pt; 
-                                    font-weight: bold; 
-                                    margin: 0 0 12pt 0;
-                                }
-                                .word-page h2 { 
-                                    font-size: 14pt; 
-                                    font-weight: bold; 
-                                    margin: 0 0 11pt 0;
-                                }
-                                .word-page table {
-                                    border-collapse: collapse;
-                                    width: 100%;
-                                    margin: 0 0 11pt 0;
-                                }
-                                .word-page td, .word-page th {
-                                    border: 1px solid black;
-                                    padding: 3pt 7pt;
-                                    vertical-align: top;
-                                }
-                                /* Seitenränder-Linien (wie in Word) */
-                                .word-page::before {
-                                    content: '';
-                                    position: absolute;
-                                    top: 0;
-                                    left: 0;
-                                    right: 0;
-                                    height: 25.4mm;
-                                    border-bottom: 1px dotted #ccc;
-                                    pointer-events: none;
-                                }
-                            </style>
-                            ${result.value}
+                        <style>
+                            /* EXAKTE Word-Vorlage Styles */
+                            .word-content {
+                                padding: 25.4mm 25.4mm 25.4mm 31.7mm;
+                            }
+                            
+                            /* Dünne Linie oben (direkt am Rand) */
+                            .word-header-line {
+                                position: absolute;
+                                top: 25.4mm;
+                                left: 31.7mm;
+                                right: 25.4mm;
+                                height: 1px;
+                                background: #000;
+                            }
+                            
+                            /* Inhalt beginnt direkt unter der Linie */
+                            .word-body {
+                                padding-top: 27mm;
+                            }
+                            
+                            /* Standard Paragraphen */
+                            .word-page p { 
+                                margin: 0 0 11pt 0; 
+                                font-weight: normal;
+                            }
+                            
+                            /* NUR GUTACHTEN ist fett */
+                            .gutachten-titel {
+                                font-weight: bold;
+                                font-size: 11pt;
+                            }
+                            
+                            /* Alle anderen Überschriften NICHT fett */
+                            .word-page h1, .word-page h2, .word-page h3 { 
+                                font-size: 11pt; 
+                                font-weight: normal; 
+                                margin: 0 0 11pt 0;
+                            }
+                            
+                            /* Tabellen */
+                            .word-page table {
+                                border-collapse: collapse;
+                                width: 100%;
+                                margin: 0 0 11pt 0;
+                            }
+                            
+                            .word-page td, .word-page th {
+                                border: 1px solid #000;
+                                padding: 3pt 7pt;
+                                vertical-align: top;
+                                font-weight: normal;
+                            }
+                        </style>
+                        
+                        <!-- Dünne Linie oben -->
+                        <div class="word-header-line"></div>
+                        
+                        <!-- Inhalt -->
+                        <div class="word-content">
+                            <div class="word-body">
+                                ${result.value}
+                            </div>
                         </div>
                     </div>
                 </div>

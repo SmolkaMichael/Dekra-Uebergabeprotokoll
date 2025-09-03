@@ -45,7 +45,8 @@ __pycache__/
 # Vercel
 .vercel
 
-# Word Templates (nicht auf GitHub)
+# Word Templates (nicht auf GitHub, außer im public Ordner)
 Matthias.docx
 MatthiasVorlage.docx
 *.docx
+!public/templates/*.docx

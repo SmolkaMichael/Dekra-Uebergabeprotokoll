@@ -101,8 +101,8 @@ async function updateLivePreview() {
         const hasData = Object.values(formData).some(value => value && value.trim() !== '');
         
         if (!hasData) {
-            // Show the empty template using Office Viewer
-            const templateUrl = 'https://raw.githubusercontent.com/SmolkaMichael/Dekra-Uebergabeprotokoll/main/MatthiasVorlage.docx';
+            // Show the empty template using Office Viewer - jetzt von unserem Server!
+            const templateUrl = window.location.origin + '/templates/MatthiasVorlage.docx';
             const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(templateUrl)}`;
             
             previewContent.innerHTML = `
